@@ -8,28 +8,28 @@ const Filter = () => {
 
   const filtered = getFilteredActivities(criteria);
 
-  const handleChange = (e) => {
+  const handle = (e) => {
     const { name, value, type, checked } = e.target;
-    setCriteria(prev => ({ ...prev, [name]: type === 'checkbox' ? (checked ? true : undefined) : (value === '' ? undefined : value) }));
+    setCriteria(p => ({ ...p, [name]: type === 'checkbox' ? (checked || undefined) : (value || undefined) }));
   };
 
   return (
     <div>
       <h2>Filter Activities</h2>
-      <input name="name" placeholder="Search by name" onChange={handleChange} />
-      <input name="minCalories" type="number" placeholder="Min Calories" onChange={handleChange} />
-      <input name="maxCalories" type="number" placeholder="Max Calories" onChange={handleChange} />
-      <input name="startDate" type="date" onChange={handleChange} />
-      <input name="endDate" type="date" onChange={handleChange} />
-      <label><input name="goalAchieved" type="checkbox" onChange={handleChange} /> Goal Achieved Only</label>
+      <input  name="name"        placeholder="Name"         value={criteria.name ?? ''}        onChange={handle} />
+      <input  name="minCalories" placeholder="Min Calories" value={criteria.minCalories ?? ''} onChange={handle} type="number" />
+      <input  name="maxCalories" placeholder="Max Calories" value={criteria.maxCalories ?? ''} onChange={handle} type="number" />
+      <input  name="startDate"   type="date"                value={criteria.startDate ?? ''}   onChange={handle} />
+      <input  name="endDate"     type="date"                value={criteria.endDate ?? ''}     onChange={handle} />
+      <label><input type="checkbox" name="goalAchieved" checked={!!criteria.goalAchieved} onChange={handle} /> Goal Achieved only</label>
       <button onClick={() => setCriteria({ name: '', goalAchieved: undefined, minCalories: '', maxCalories: '', startDate: '', endDate: '' })}>Reset</button>
 
-      <h3>Results ({filtered.length})</h3>
-      {filtered.length === 0 && <p>No activities match.</p>}
+      <p>{filtered.length} result(s)</p>
       <ul>
         {filtered.map(a => (
           <li key={a.activityId} data-testid="activity-item">
-            <Link></Link>
+            <strong>{a.name}</strong> | {a.date} | {a.steps} steps | {a.caloriesBurned} kcal | {a.workoutMinutes} min | {a.goalAchieved ? '✅' : '❌'}
+            {' '}<Link to={`/activities/${a.activityId}`}>View</Link>
           </li>
         ))}
       </ul>
